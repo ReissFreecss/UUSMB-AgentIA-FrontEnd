@@ -2,45 +2,59 @@ import { useState, useEffect, useRef } from 'react';
 import AsideBar from '../../ui/AsideBar';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
+import { responseChat } from '../../../services/chat/chatServices';
 
 const Home = () => {
   const [messages, setMessages] = useState([]);
   const [isAsideExpanded, setIsAsideExpanded] = useState(false);
   const messagesEndRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (messages.length > 0) {
       requestAnimationFrame(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        messagesEndRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+        });
       });
     }
   }, [messages]);
 
-  const handleSend = (text) => {
+  const handleSend = async (text) => {
     if (!text.trim()) return;
 
-    const newUserMessage = { role: 'user', content: text };
-    setMessages((prev) => [...prev, newUserMessage]);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { content: text, isUser: true },
+    ]);
+    setIsLoading(true);
+    try {
+      const response = await responseChat(text);
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
+      if (response && response.text) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { content: response.text, isUser: false },
+        ]);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setMessages((prevMessages) => [
+        ...prevMessages,
         {
-          role: 'bot',
-          content:
-            'Hola, ¿cómo estás? Esto es una prueba para ver el contenedor y su comportamiento al añadir mucho texto. El objetivo es que el input permanezca fijo en la parte inferior mientras los mensajes se desplazan. Este es un texto de ejemplo largo para verificar que el scroll funcione correctamente y que el diseño se mantenga estable. Espero que esta demostración te sea útil para tu interfaz de chat.',
+          content: 'Lo siento, hubo un error al procesar tu mensaje.',
+          isUser: false,
         },
       ]);
-    }, 500);
-  };
-
-  const handleAsideToggle = (expanded) => {
-    setIsAsideExpanded(expanded);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className='flex min-h-screen w-full bg-greyPrimary'>
-      <aside className='h-screen sticky top-0 z-20 '>
+      <aside className='h-screen sticky top-0 z-20'>
         <AsideBar />
       </aside>
 
@@ -57,27 +71,34 @@ const Home = () => {
           }`}
         >
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center text-center w-full max-w-2xl">
+            <div className='flex flex-col items-center text-center w-full max-w-2xl'>
               <h1 className='text-2xl md:text-3xl font-semibold text-gray-700 mb-8'>
                 ¿En qué te puedo ayudar hoy?
               </h1>
-              <div className="w-full px-2">
-                <ChatInput onSend={handleSend} />
+              <div className='w-full px-2'>
+                <ChatInput onSend={handleSend} isLoading={isLoading} />
               </div>
             </div>
           ) : (
             <div className='w-full max-w-2xl space-y-4 pb-4 mt-10'>
-              {messages.map((msg, i) => (
-                <ChatMessage key={i} role={msg.role} content={msg.content} />
+              {messages.map((msg, index) => (
+                <ChatMessage
+                  key={index}
+                  content={msg.content}
+                  isUser={msg.isUser}
+                />
               ))}
-              <div ref={messagesEndRef} className="h-0" />
+
+              {isLoading && <ChatMessage content='...' isUser={false} />}
+
+              <div ref={messagesEndRef} className='h-0' />
             </div>
           )}
         </div>
 
         {messages.length > 0 && (
           <div className='p-4 bg-greyPrimary sticky bottom-4 w-full z-10 border-gray-200'>
-            <ChatInput onSend={handleSend} />
+            <ChatInput onSend={handleSend} isLoading={isLoading} />
           </div>
         )}
       </main>
