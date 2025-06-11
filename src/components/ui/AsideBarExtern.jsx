@@ -80,7 +80,7 @@ const AsideBarExtern = ({ onToggle }) => {
             </div>
           </div>
 
-          <div className='flex flex-col items-center space-y-2 w-full pb-3 border-t pt-3'>
+          <div className='flex flex-col items-center space-y-2 w-full pb-3 pt-3'>
             <div
               className={`flex items-center ${
                 isExpanded
