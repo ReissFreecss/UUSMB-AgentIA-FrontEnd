@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import AsideBarInter from '../../ui/AsideBarIntern';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
+import { responseChat } from '../../../services/chat/chatServices';
+
 
 const HomeIntern = () => {
   const [messages, setMessages] = useState([]);

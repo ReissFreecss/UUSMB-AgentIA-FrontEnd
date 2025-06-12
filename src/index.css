@@ -71,3 +71,10 @@ input[type="checkbox"].ios8-switch:checked:before {
     margin-left: 16px;
 }
 
+/* En tu CSS global o tailwind.config.js */
+pre {
+  @apply p-3 bg-gray-100 rounded-md overflow-auto text-sm;
+}
+code {
+  @apply text-purple-700;
+}

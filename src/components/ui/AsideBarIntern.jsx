@@ -4,12 +4,9 @@ import { logout } from '../../services/utils/authUtils.js';
 import Swal from 'sweetalert2';
 import {
   LogOut,
-  Settings,
   CircleUserRound,
-  Menu,
   SquarePen,
   BotMessageSquare,
-  History,
 } from 'lucide-react';
 
 const AsideBarIntern = ({ activePage = '', onToggle }) => {
@@ -78,7 +75,7 @@ const AsideBarIntern = ({ activePage = '', onToggle }) => {
                     : 'justify-center w-[2.5em] h-[2.5em] rounded-full'
                 } cursor-pointer  transition-all duration-300 ease-in-out hover:scale-105`}
               >
-                <span className={`${textClasses} text-white`}>Historial</span>
+               {/**  <span className={`${textClasses} text-white`}>Historial</span> */}
               </div>
             </div>
           </div>
