@@ -3,6 +3,8 @@ import AsideBarExtern from '../../ui/AsideBarExtern';
 import ChatInput from './ChatInput';
 import ChatMessage from './Chatmessage';
 import { responseChat } from '../../../services/chat/chatServices';
+import { decodeAndDisplayToken } from "../../../services/auth/authService.js";
+
 
 
 const HomeExtern = () => {
@@ -23,35 +25,41 @@ const HomeExtern = () => {
   }, [messages]);
 
   const handleSend = async (text) => {
-    if (!text.trim()) return;
+  if (!text.trim()) return;
 
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { content: text, isUser: true },
-    ]);
-    setIsLoading(true);
-    try {
-      const response = await responseChat(text);
+  setMessages((prevMessages) => [
+    ...prevMessages,
+    { content: text, isUser: true },
+  ]);
+  setIsLoading(true);
 
-      if (response && response.text) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { content: response.text, isUser: false },
-        ]);
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
+  try {
+    const tokenData = decodeAndDisplayToken();
+    const sessionId = tokenData?.id || localStorage.getItem("userId");
+
+    if (!sessionId) throw new Error("No session ID available");
+
+    const chatResponse = await responseChat(text, sessionId);
+
+    if (chatResponse?.text) {
       setMessages((prevMessages) => [
         ...prevMessages,
-        {
-          content: 'Lo siento, hubo un error al procesar tu mensaje.',
-          isUser: false,
-        },
+        { content: chatResponse.text, isUser: false },
       ]);
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Error sending message:", error);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        content: "Lo siento, hubo un error al procesar tu mensaje.",
+        isUser: false,
+      },
+    ]);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
 return (
   <div className='flex min-h-screen w-full bg-greyPrimary'>
