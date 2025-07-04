@@ -1,24 +1,57 @@
-import { API_URL } from '../../../constants';
-import { handleResponse, getAuthHeader } from '../utils/authUtils';
+import { API_URL } from "../../../constants";
+import { handleResponse, getAuthHeader } from "../utils/authUtils";
 
 // Function to get a ia chat
 export const responseChat = async (message, id) => {
   try {
-    if (!message) throw new Error('Message cannot be empty');
-    if (!id) throw new Error('Session ID cannot be null');
+    if (!message) throw new Error("Message cannot be empty");
+    if (!id) throw new Error("Session ID cannot be null");
     const response = await fetch(`${API_URL}/n8n/message`, {
-      method: 'POST',
+      method: "POST",
       headers: getAuthHeader(),
       body: JSON.stringify({
         chatInput: message,
         sessionId: String(id),
-      })
+      }),
     });
 
     return await handleResponse(response);
   } catch (error) {
-    console.error('Error al obtener la respuesta del chat:', error);
-    throw error; 
+    console.error("Error al obtener la respuesta del chat:", error);
+    throw error;
   }
 };
 
+// Function to upload a file (only allowed .pdf, .docx, .txt)
+export const uploadFile = async (file) => {
+  if (!file) throw new Error("El archivo no puede ser nulo");
+
+  // 1. Crea una instancia de FormData
+  const formData = new FormData();
+  // 2. Agrega el archivo. La clave "file" debe coincidir
+  // con la que espera tu backend (la misma que usas en Postman).
+  formData.append("file", file);
+
+  const authHeader = getAuthHeader();
+  delete authHeader["Content-Type"]; // Elimina Content-Type si existe
+
+  try {
+    const response = await fetch(`${API_URL}/n8n/file`, {
+      method: "POST",
+      headers: authHeader,
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Error al subir el archivo: ${response.status} ${response.statusText} - ${errorText}`
+      );
+    }
+    return handleResponse(response);
+  } catch (error) {
+    console.error("Error al subir el archivo:", error);
+    // Vuelve a lanzar el error para que el bloque catch en handleFileChange lo reciba
+    throw error;
+  }
+};
