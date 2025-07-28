@@ -24,6 +24,7 @@ import RedirectIfAuthenticated from './components/auth/RedirectIfAuthenticated';
 import RegisterForm from './components/templates/login/RegisterForm.jsx';
 import ChatSisbi from './components/templates/admin/ChatSisbi.jsx';
 import ChatCotizacion from './components/templates/admin/ChatCotizacion.jsx';
+import ChatCotizacionInterno from './components/templates/intern/ChatCotizacionInterno.jsx';
 
 const AnimatedRoutes = ({ user, setUser }) => {
   const location = useLocation();
@@ -161,6 +162,14 @@ const AnimatedRoutes = ({ user, setUser }) => {
           element={
             <ProtectedRoute allowedRoles='INTERNO'>
               <HomeIntern user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/cotizacionIntern'
+          element={
+            <ProtectedRoute allowedRoles='INTERNO'>
+              <ChatCotizacionInterno user={user} />
             </ProtectedRoute>
           }
         />
