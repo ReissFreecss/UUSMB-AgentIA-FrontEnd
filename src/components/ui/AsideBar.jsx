@@ -7,6 +7,8 @@ import {
   CircleUserRound,
   SquarePen,
   BotMessageSquare,
+  MessageCircle,
+  CircleDollarSign  
 } from 'lucide-react';
 import { logout } from '../../services/utils/authUtils.js';
 
@@ -82,6 +84,32 @@ const AsideBar = ({ onToggle }) => {
           </div>
 
           <div className='flex flex-col items-center space-y-2 w-full pb-3  pt-3'>
+            <div
+              className={`flex items-center ${
+                isExpanded
+                  ? 'justify-start gap-4 h-10 w-[90%] px-4 rounded-2xl'
+                  : 'justify-center w-[2.5em] h-[2.5em] rounded-full'
+              } cursor-pointer bg-white hover:bg-slate-100 transition-all duration-300 ease-in-out hover:scale-105`}
+              onClick={() => handleNavigation('/sisbi')}
+            >
+              <CircleDollarSign color='#CB842E' />
+              <span className={`${textClasses} text-primary`}>
+                Cotizar
+              </span>
+            </div>
+           <div
+              className={`flex items-center ${
+                isExpanded
+                  ? 'justify-start gap-4 h-10 w-[90%] px-4 rounded-2xl'
+                  : 'justify-center w-[2.5em] h-[2.5em] rounded-full'
+              } cursor-pointer bg-white hover:bg-slate-100 transition-all duration-300 ease-in-out hover:scale-105`}
+              onClick={() => handleNavigation('/sisbi')}
+            >
+              <MessageCircle color='#CB842E' />
+              <span className={`${textClasses} text-primary`}>
+                SISBI
+              </span>
+            </div>
             <div
               className={`flex items-center ${
                 isExpanded

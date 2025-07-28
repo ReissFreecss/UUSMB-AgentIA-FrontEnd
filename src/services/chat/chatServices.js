@@ -26,14 +26,11 @@ export const responseChat = async (message, id) => {
 export const uploadFile = async (file) => {
   if (!file) throw new Error("El archivo no puede ser nulo");
 
-  // 1. Crea una instancia de FormData
   const formData = new FormData();
-  // 2. Agrega el archivo. La clave "file" debe coincidir
-  // con la que espera tu backend (la misma que usas en Postman).
   formData.append("file", file);
 
-  const authHeader = getAuthHeader();
-  delete authHeader["Content-Type"]; // Elimina Content-Type si existe
+  const authHeader = getAuthHeader(); 
+  delete authHeader["Content-Type"];
 
   try {
     const response = await fetch(`${API_URL}/n8n/file`, {

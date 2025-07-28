@@ -22,6 +22,7 @@ import HomeExtern from './components/templates/extern/HomeExtern';
 import ProfileExtern from './components/templates/extern/ProfileExtern';
 import RedirectIfAuthenticated from './components/auth/RedirectIfAuthenticated';
 import RegisterForm from './components/templates/login/RegisterForm.jsx';
+import ChatSisbi from './components/templates/admin/ChatSisbi.jsx';
 
 const AnimatedRoutes = ({ user, setUser }) => {
   const location = useLocation();
@@ -115,6 +116,14 @@ const AnimatedRoutes = ({ user, setUser }) => {
           element={
             <ProtectedRoute allowedRoles='ADMIN'>
               <Home user={user} />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path='/sisbi'
+          element={
+            <ProtectedRoute allowedRoles='ADMIN'>
+              <ChatSisbi user={user} />
             </ProtectedRoute>
           }
         />
