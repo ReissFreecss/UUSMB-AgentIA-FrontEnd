@@ -112,7 +112,7 @@ const AsideBarIntern = ({ activePage = "", onToggle }) => {
                   ? "justify-start gap-4 h-10 w-[90%] px-4 rounded-2xl"
                   : "justify-center w-[2.5em] h-[2.5em] rounded-full"
               } cursor-pointer bg-white hover:bg-slate-100 transition-all duration-300 ease-in-out hover:scale-105`}
-              onClick={() => handleNavigation("/sisbi")}
+              onClick={() => handleNavigation("/sisbiIntern")}
             >
               <MessageCircle color="#CB842E" />
               <span className={`${textClasses} text-primary`}>SISBI</span>

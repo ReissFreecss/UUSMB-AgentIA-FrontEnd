@@ -25,6 +25,7 @@ import RegisterForm from './components/templates/login/RegisterForm.jsx';
 import ChatSisbi from './components/templates/admin/ChatSisbi.jsx';
 import ChatCotizacion from './components/templates/admin/ChatCotizacion.jsx';
 import ChatCotizacionInterno from './components/templates/intern/ChatCotizacionInterno.jsx';
+import ChatSisbiInterno from './components/templates/intern/ChatSisbiInterno.jsx';
 
 const AnimatedRoutes = ({ user, setUser }) => {
   const location = useLocation();
@@ -170,6 +171,14 @@ const AnimatedRoutes = ({ user, setUser }) => {
           element={
             <ProtectedRoute allowedRoles='INTERNO'>
               <ChatCotizacionInterno user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/sisbiIntern'
+          element={
+            <ProtectedRoute allowedRoles='INTERNO'>
+              <ChatSisbiInterno user={user} />
             </ProtectedRoute>
           }
         />

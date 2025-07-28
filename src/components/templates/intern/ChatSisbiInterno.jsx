@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import AsideBar from "../../ui/AsideBar";
-import InputCotizacion from "./InputCotizacion";
-import MessageCotizacion from "./MessageCotizacion.jsx";
+import InputSisbi from "./InputSisbi";
+import MessageSisbi from "./MessageSisbi";
 import { responseChat } from "../../../services/chat/chatServices";
 import { decodeAndDisplayToken } from "../../../services/auth/authService.js";
 
-const ChatCotizacionInterno = () => {
+const ChatSisbiInterno = () => {
   const [messages, setMessages] = useState([]);
   const [isAsideExpanded, setIsAsideExpanded] = useState(false);
   const messagesEndRef = useRef(null);
@@ -81,26 +81,26 @@ const ChatCotizacionInterno = () => {
             <div className="flex flex-col items-center justify-center text-center w-full max-w-2xl mx-auto p-4">
               <div className="w-full">
                 <h1 className="text-2xl md:text-3xl font-semibold text-gray-700 mb-4">
-                  Bienvenido al Chat de Cotización
+                  Bienvenido al apartado de SISBI
                 </h1>
                 <h1 className="text-2xl md:text-3xl font-semibold text-gray-700 mb-8">
                   ¿En qué te puedo ayudar hoy?
                 </h1>
                 <div className="w-full px-2">
-                  <InputCotizacion onSend={handleSend} isLoading={isLoading} />
+                  <InputSisbi onSend={handleSend} isLoading={isLoading} />
                 </div>
               </div>
             </div>
           ) : (
             <div className="w-full max-w-4xl space-y-4 pb-4 mt-4 md:mt-10 mx-auto">
               {messages.map((msg, index) => (
-                <MessageCotizacion
+                <MessageSisbi
                   key={index}
                   content={msg.content}
                   isUser={msg.isUser}
                 />
               ))}
-              {isLoading && <MessageCotizacion content=". . ." isUser={false} />}
+              {isLoading && <MessageSisbi content=". . ." isUser={false} />}
               <div ref={messagesEndRef} className="h-0" />
             </div>
           )}
@@ -109,7 +109,7 @@ const ChatCotizacionInterno = () => {
         {messages.length > 0 && (
           <div className="p-4 bg-greyPrimary sticky bottom-0 w-full z-10 ">
             <div className="max-w-4xl mx-auto">
-              <InputCotizacion onSend={handleSend} isLoading={isLoading} />
+              <InputSisbi onSend={handleSend} isLoading={isLoading} />
             </div>
           </div>
         )}
@@ -118,4 +118,4 @@ const ChatCotizacionInterno = () => {
   );
 };
 
-export default ChatCotizacionInterno;
+export default ChatSisbiInterno;
