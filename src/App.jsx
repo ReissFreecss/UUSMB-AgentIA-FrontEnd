@@ -23,6 +23,7 @@ import ProfileExtern from './components/templates/extern/ProfileExtern';
 import RedirectIfAuthenticated from './components/auth/RedirectIfAuthenticated';
 import RegisterForm from './components/templates/login/RegisterForm.jsx';
 import ChatSisbi from './components/templates/admin/ChatSisbi.jsx';
+import ChatCotizacion from './components/templates/admin/ChatCotizacion.jsx';
 
 const AnimatedRoutes = ({ user, setUser }) => {
   const location = useLocation();
@@ -127,6 +128,16 @@ const AnimatedRoutes = ({ user, setUser }) => {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path='/cotizacion'
+          element={
+            <ProtectedRoute allowedRoles='ADMIN'>
+              <ChatCotizacion user={user} />
+            </ProtectedRoute>
+          }
+        />
+        
         <Route
           path='/users'
           element={

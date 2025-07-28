@@ -4,10 +4,9 @@ import { uploadFile } from "../../../services/chat/chatServices";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const InputSisbi = ({ onSend, isLoading }) => {
+const InputCotizacion = ({ onSend, isLoading }) => {
   const [input, setInput] = useState("");
   const textareaRef = useRef(null);
-  const fileInputRef = useRef(null);
 
 
   const handleSubmit = (e) => {
@@ -85,4 +84,4 @@ const InputSisbi = ({ onSend, isLoading }) => {
   );
 };
 
-export default InputSisbi;
+export default InputCotizacion;

@@ -8,7 +8,8 @@ import {
   SquarePen,
   BotMessageSquare,
   MessageCircle,
-  CircleDollarSign  
+  CircleDollarSign,
+  House   
 } from 'lucide-react';
 import { logout } from '../../services/utils/authUtils.js';
 
@@ -90,7 +91,20 @@ const AsideBar = ({ onToggle }) => {
                   ? 'justify-start gap-4 h-10 w-[90%] px-4 rounded-2xl'
                   : 'justify-center w-[2.5em] h-[2.5em] rounded-full'
               } cursor-pointer bg-white hover:bg-slate-100 transition-all duration-300 ease-in-out hover:scale-105`}
-              onClick={() => handleNavigation('/sisbi')}
+              onClick={() => handleNavigation('/home')}
+            >
+              <House color='#CB842E' />
+              <span className={`${textClasses} text-primary`}>
+                Inicio
+              </span>
+            </div>
+            <div
+              className={`flex items-center ${
+                isExpanded
+                  ? 'justify-start gap-4 h-10 w-[90%] px-4 rounded-2xl'
+                  : 'justify-center w-[2.5em] h-[2.5em] rounded-full'
+              } cursor-pointer bg-white hover:bg-slate-100 transition-all duration-300 ease-in-out hover:scale-105`}
+              onClick={() => handleNavigation('/cotizacion')}
             >
               <CircleDollarSign color='#CB842E' />
               <span className={`${textClasses} text-primary`}>
