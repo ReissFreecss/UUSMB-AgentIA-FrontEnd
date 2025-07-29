@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import AsideBar from "../../ui/AsideBar";
+import AsideBarIntern from "../../ui/AsideBarIntern.jsx";
 import InputSisbi from "./InputSisbi";
 import MessageSisbi from "./MessageSisbi";
-import { responseChat } from "../../../services/chat/chatServices";
+import { responseChatSisbi } from "../../../services/chat/chatServices";
 import { decodeAndDisplayToken } from "../../../services/auth/authService.js";
 
 const ChatSisbiInterno = () => {
@@ -37,7 +37,7 @@ const ChatSisbiInterno = () => {
 
       if (!sessionId) throw new Error("No session ID available");
 
-      const chatResponse = await responseChat(text, sessionId);
+      const chatResponse = await responseChatSisbi(text, sessionId);
 
       if (chatResponse?.text) {
         setMessages((prevMessages) => [
@@ -62,7 +62,7 @@ const ChatSisbiInterno = () => {
   return (
     <div className="flex min-h-screen w-full bg-greyPrimary">
       <aside className="h-screen sticky top-0 z-20">
-        <AsideBar />
+        <AsideBarIntern />
       </aside>
 
       <main
@@ -81,7 +81,7 @@ const ChatSisbiInterno = () => {
             <div className="flex flex-col items-center justify-center text-center w-full max-w-2xl mx-auto p-4">
               <div className="w-full">
                 <h1 className="text-2xl md:text-3xl font-semibold text-gray-700 mb-4">
-                  Bienvenido al apartado de SISBI
+                  Bienvenido al apartado de SISBI Interno
                 </h1>
                 <h1 className="text-2xl md:text-3xl font-semibold text-gray-700 mb-8">
                   ¿En qué te puedo ayudar hoy?

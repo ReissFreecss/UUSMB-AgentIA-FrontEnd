@@ -1,13 +1,19 @@
 import { useState, useRef, useEffect } from "react";
-import { Send} from "lucide-react";
-import { uploadFile } from "../../../services/chat/chatServices";
-import { toast } from "react-toastify";
+import { Send, Paperclip } from "lucide-react";
+import { uploadFileCotizar } from "../../../services/chat/chatServices";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ConfirmDialog from "../../ui/ConfirmDialog"; 
 
-const InputCotizacion = ({ onSend, isLoading }) => {
+const ChatInputCotizacion = ({ onSend, isLoading }) => {
   const [input, setInput] = useState("");
   const textareaRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const [fileLoading, setFileLoading] = useState(false);
 
+  // Estados para controlar el diálogo de confirmación
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
+  const [fileToUpload, setFileToUpload] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,6 +23,61 @@ const InputCotizacion = ({ onSend, isLoading }) => {
     setInput("");
   };
 
+  const handleFileButtonClick = () => {
+    if (!isLoading && fileInputRef.current) {
+      fileInputRef.current.value = null;
+      fileInputRef.current.click();
+    }
+  };
+
+  // 1. Modificado: Valida el archivo y abre el diálogo de confirmación
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const allowedTypes = ["application/pdf", "text/plain"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Solo se permiten archivos .pdf y .txt", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    // Si el archivo es válido, guárdalo y abre el modal para confirmar
+    setFileToUpload(file);
+    setConfirmOpen(true);
+  };
+
+  // 2. Nuevo: Esta función se ejecuta cuando el usuario confirma en el diálogo
+  const handleConfirmUpload = async () => {
+    if (!fileToUpload) return;
+
+    setFileLoading(true);
+    const toastId = toast.loading("Subiendo archivo...", {
+      position: "bottom-center",
+    });
+
+    try {
+      await uploadFileCotizar(fileToUpload);
+      toast.update(toastId, {
+        render: "Archivo subido exitosamente",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    } catch (error) {
+      toast.update(toastId, {
+        render: "Error al subir el archivo",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    } finally {
+      setFileLoading(false);
+      setFileToUpload(null); // Limpia el archivo después de la subida
+    }
+  };
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -35,6 +96,26 @@ const InputCotizacion = ({ onSend, isLoading }) => {
         className="flex items-start w-full max-w-2xl mx-auto px-4 py-3"
       >
         <div className="relative flex-1">
+          {/* Input file oculto */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            accept=".pdf,.txt"
+            onChange={handleFileChange}
+            disabled={isLoading || fileLoading}
+          />
+          {/* Botón para adjuntar archivos */}
+          <button
+            type="button"
+            className="absolute left-4 bottom-5 text-gray-400 hover:text-blue-500 transition-colors duration-200"
+            onClick={handleFileButtonClick}
+            aria-label="Adjuntar archivo"
+            disabled={isLoading || fileLoading}
+          >
+            <Paperclip className="w-5 h-5" />
+          </button>
+
           {/* Área de texto principal */}
           <textarea
             ref={textareaRef}
@@ -79,9 +160,29 @@ const InputCotizacion = ({ onSend, isLoading }) => {
           </button>
         </div>
       </form>
-      
+
+      {/* 3. Renderiza el diálogo de confirmación aquí */}
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmUpload}
+        fileName={fileToUpload ? fileToUpload.name : ""}
+      />
+
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 };
 
-export default InputCotizacion;
+export default ChatInputCotizacion;

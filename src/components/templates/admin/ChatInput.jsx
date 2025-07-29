@@ -3,7 +3,7 @@ import { Send, Paperclip } from "lucide-react";
 import { uploadFile } from "../../../services/chat/chatServices";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ConfirmDialog from "../../ui/ConfirmDialog"; // Tu componente de diálogo
+import ConfirmDialog from "../../ui/ConfirmDialog"; 
 
 const ChatInput = ({ onSend, isLoading }) => {
   const [input, setInput] = useState("");
@@ -43,7 +43,7 @@ const ChatInput = ({ onSend, isLoading }) => {
       });
       return;
     }
-    
+
     // Si el archivo es válido, guárdalo y abre el modal para confirmar
     setFileToUpload(file);
     setConfirmOpen(true);

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import AsideBar from "../../ui/AsideBar";
 import InputCotizacion from "./InputCotizacion";
 import MessageCotizacion from "./MessageCotizacion";
-import { responseChat } from "../../../services/chat/chatServices";
+import { responseChatCotizar } from "../../../services/chat/chatServices";
 import { decodeAndDisplayToken } from "../../../services/auth/authService.js";
 
 const ChatCotizacion = () => {
@@ -37,7 +37,7 @@ const ChatCotizacion = () => {
 
       if (!sessionId) throw new Error("No session ID available");
 
-      const chatResponse = await responseChat(text, sessionId);
+      const chatResponse = await responseChatCotizar(text, sessionId);
 
       if (chatResponse?.text) {
         setMessages((prevMessages) => [

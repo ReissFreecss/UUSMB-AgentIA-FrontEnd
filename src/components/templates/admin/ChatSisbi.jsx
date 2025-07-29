@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import AsideBar from "../../ui/AsideBar";
 import InputSisbi from "./InputSisbi";
 import MessageSisbi from "./MessageSisbi";
-import { responseChat } from "../../../services/chat/chatServices";
+import { responseChatSisbi } from "../../../services/chat/chatServices";
 import { decodeAndDisplayToken } from "../../../services/auth/authService.js";
 
 const ChatSisbi = () => {
@@ -37,7 +37,7 @@ const ChatSisbi = () => {
 
       if (!sessionId) throw new Error("No session ID available");
 
-      const chatResponse = await responseChat(text, sessionId);
+      const chatResponse = await responseChatSisbi(text, sessionId);
 
       if (chatResponse?.text) {
         setMessages((prevMessages) => [
