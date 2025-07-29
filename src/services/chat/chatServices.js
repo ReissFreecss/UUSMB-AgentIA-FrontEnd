@@ -16,7 +16,7 @@ export const responseChat = async (message, id) => {
       }),
     });
 
-    console.log("Response default chat:");
+    // console.log("Response default chat:");
     return await handleResponse(response);
   } catch (error) {
     console.error("Error al obtener la respuesta del chat:", error);
@@ -70,7 +70,7 @@ export const responseChatCotizar = async (message, id) => {
       }),
     });
 
-    console.log("Chat desde cotizar");
+    // console.log("Chat desde cotizar");
     return await handleResponse(response);
   } catch (error) {
     console.error("Error al obtener la respuesta del chat:", error);
@@ -101,6 +101,8 @@ export const uploadFileCotizar = async (file) => {
         `Error al subir el archivo: ${response.status} ${response.statusText} - ${errorText}`
       );
     }
+
+  //  console.log("Archivo subido correctamente desde cotizar");  
     return handleResponse(response);
   } catch (error) {
     console.error("Error al subir el archivo:", error);
@@ -123,7 +125,7 @@ export const responseChatSisbi = async (message, id) => {
       }),
     });
 
-    console.log("Response from chatSisbi:");
+   // console.log("Response from chatSisbi:");
     return await handleResponse(response);
   } catch (error) {
     console.error("Error al obtener la respuesta del chat:", error);
@@ -155,8 +157,7 @@ export const uploadFileSisbi = async (file) => {
       );
     }
 
-    console.log("Archivo subido correctamente desde sisbi");
-    
+   // console.log("Archivo subido correctamente desde sisbi");
     return handleResponse(response);
   } catch (error) {
     console.error("Error al subir el archivo:", error);
