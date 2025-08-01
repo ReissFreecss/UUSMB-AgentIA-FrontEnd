@@ -311,3 +311,73 @@ export const updateUser = async (userData) => {
     throw error;
   }
 };
+
+//Reset user password
+ export const rendRecoveryCode = async (email) =>{
+  try {
+    const response = await fetch(`${API_URL}/users/send-recovery-code/${email}`, {
+      method: 'POST'
+    });
+    if (!response.ok) {
+      const errorData = await response.text(); //Evitar problemas de JSON.parse
+      throw new Error(errorData || `Error ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error al enviar el código de recuperación:', error);
+    throw new Error('Error al enviar el código de recuperación');
+  }
+ }
+
+ //Verify recovery code
+export const verifyRecoveryCode = async (email, code) => {
+    try {
+        const response = await fetch(`${API_URL}/users/verify-recovery-code`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                recoveryCode: code // nombre exacto
+            })
+        });
+
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || `Error ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error en verifyRecoveryCode:", error);
+        throw new Error('Error al verificar el código de recuperación');
+    }
+};
+
+//Reset user password
+export const resetPassword = async (email, newPassword) => {
+    try {
+        const response = await fetch(`${API_URL}/users/reset-password`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, newPassword })
+        });
+
+        const text = await response.text(); // Para capturar errores no-JSON
+
+        if (!response.ok) {
+            throw new Error(text || `Error ${response.status}`);
+        }
+
+        // Intentar parsear si hay contenido
+        return text ? JSON.parse(text) : {};
+    } catch (error) {
+        console.error("Error en resetPassword:", error);
+        throw new Error('Error al resetear la contraseña');
+    }
+};

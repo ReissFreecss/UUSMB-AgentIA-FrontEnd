@@ -1,15 +1,45 @@
 import { useNavigate } from 'react-router-dom';
+import {sendRecoveryCode} from '../../../services/users/userServices';
+import React, { useState } from 'react';
 
-const CheckEmail = ({ setFromCheckEmail }) => {
+const CheckEmail = ({setFromCheckEmail}) => {
+
+  
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleBack = () => {
     navigate('/');
   };
 
-  const handleCode = () => {
+  const handleCode =  async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    if (!email || email.trim() === ""){
+      setError("Por favor, ingresa un correo electrónico válido.");
+      setLoading(false);
+      return;
+    }
+      
+    try {
+      await sendRecoveryCode(email);
+      localStorage.setItem('recoveryEmail', email);
+      setSuccess("Se ha enviado un código de verificación a tu correo electrónico.");
+      setTimeout(() => navigate('/confirmCode'), 2000);
+    } catch (error) {
+      
+    }
+
     setFromCheckEmail(true);
     navigate('/confirmCode');
+    console.log('Email enviado');
   };
 
   return (
