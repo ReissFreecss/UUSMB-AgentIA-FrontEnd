@@ -313,7 +313,7 @@ export const updateUser = async (userData) => {
 };
 
 //Reset user password
- export const rendRecoveryCode = async (email) =>{
+ export const sendRecoveryCode = async (email) =>{
   try {
     const response = await fetch(`${API_URL}/users/send-recovery-code/${email}`, {
       method: 'POST'
