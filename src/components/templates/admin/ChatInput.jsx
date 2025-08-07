@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ConfirmDialog from "../../ui/ConfirmDialog";
 import EmailModal from "../../ui/EmailModal";
 
+// MODIFICADO: Añadimos 'onSend' y 'isLoading' desde las props
 const ChatInput = ({ onSend, isLoading }) => {
   const [input, setInput] = useState("");
   const textareaRef = useRef(null);
@@ -16,16 +17,41 @@ const ChatInput = ({ onSend, isLoading }) => {
   const [isConfirmOpen, setConfirmOpen] = useState(false);
   const [fileToUpload, setFileToUpload] = useState(null);
 
-  // Estado para controlar el modal de correo electrónico
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // --- INICIO DE CAMBIOS ---
 
+  // NUEVO: Estado para controlar el modo de envío por email
+  const [isEmailModeOn, setEmailModeOn] = useState(false);
+
+  // MODIFICADO: La prop 'onSend' ahora puede recibir un segundo argumento (isEmail)
   const handleSubmit = (e) => {
     e.preventDefault();
     const trimmed = input.trim();
     if (trimmed === "" || isLoading) return;
-    onSend(trimmed);
-    setInput("");
+
+    // Pasamos el mensaje y el estado del modo email al componente padre
+    onSend(trimmed, isEmailModeOn);
+
+    setInput(""); // Limpiamos el input
+    
+    // Opcional: Desactivar el modo email después de enviar.
+    // Si quieres que se quede activo, comenta la siguiente línea.
+    if (isEmailModeOn) {
+      setEmailModeOn(false);
+    }
   };
+
+  // NUEVO: Función para activar/desactivar el modo email
+  const handleEmailModeToggle = () => {
+    setEmailModeOn(prev => !prev);
+    // Mostramos una notificación para que el usuario sepa qué modo está activo
+    toast.info(
+      !isEmailModeOn ? "Modo Email activado" : "Modo Email desactivado",
+      { autoClose: 2000, position: "top-center" }
+    );
+  };
+  
+  // --- FIN DE CAMBIOS ---
+
 
   const handleFileButtonClick = () => {
     if (!isLoading && fileInputRef.current) {
@@ -34,7 +60,6 @@ const ChatInput = ({ onSend, isLoading }) => {
     }
   };
 
-  // 1. Modificado: Valida el archivo y abre el diálogo de confirmación
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -47,21 +72,16 @@ const ChatInput = ({ onSend, isLoading }) => {
       });
       return;
     }
-
-    // Si el archivo es válido, guárdalo y abre el modal para confirmar
     setFileToUpload(file);
     setConfirmOpen(true);
   };
 
-  // 2. Nuevo: Esta función se ejecuta cuando el usuario confirma en el diálogo
   const handleConfirmUpload = async () => {
     if (!fileToUpload) return;
-
     setFileLoading(true);
     const toastId = toast.loading("Subiendo archivo...", {
       position: "bottom-center",
     });
-
     try {
       await uploadFile(fileToUpload);
       toast.update(toastId, {
@@ -79,7 +99,7 @@ const ChatInput = ({ onSend, isLoading }) => {
       });
     } finally {
       setFileLoading(false);
-      setFileToUpload(null); // Limpia el archivo después de la subida
+      setFileToUpload(null);
     }
   };
 
@@ -126,6 +146,8 @@ const ChatInput = ({ onSend, isLoading }) => {
               placeholder={
                 isLoading
                   ? "Generando respuesta..."
+                  : isEmailModeOn 
+                  ? "Escribe la instrucción para generar el email..."
                   : "Escribe tu mensaje aquí..."
               }
               value={input}
@@ -160,12 +182,19 @@ const ChatInput = ({ onSend, isLoading }) => {
               )}
             </button>
           </div>
-
+          
+          {/* --- INICIO DE CAMBIOS EN EL BOTÓN DE EMAIL --- */}
           <button
             type="button"
-            className={`flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-full transition-all duration-300 bg-gray-200 text-gray-400 hover:bg-blue-300 hover:text-blue-500 active:scale-95`}
-            aria-label="Añadir correo"
-            onClick={() => setIsModalOpen(true)}
+            // MODIFICADO: className cambia según el estado 'isEmailModeOn'
+            className={`flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-full transition-all duration-300 active:scale-95 ${
+              isEmailModeOn
+                ? "bg-blue-500 text-white" // Estilo "encendido"
+                : "bg-gray-200 text-gray-400 hover:bg-blue-300 hover:text-blue-500" // Estilo "apagado"
+            }`}
+            aria-label={isEmailModeOn ? "Desactivar modo email" : "Activar modo email"}
+            // MODIFICADO: onClick ahora llama a nuestra nueva función
+            onClick={handleEmailModeToggle}
           >
             {isLoading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-500"></div>
@@ -173,8 +202,8 @@ const ChatInput = ({ onSend, isLoading }) => {
               <MailPlus className="w-5 h-5" />
             )}
           </button>
-          {isModalOpen && <div className="text-red-500">Modal abierto</div>}
-
+          {/* --- FIN DE CAMBIOS EN EL BOTÓN DE EMAIL --- */}
+          
         </div>
       </form>
 
@@ -185,14 +214,15 @@ const ChatInput = ({ onSend, isLoading }) => {
         fileName={fileToUpload ? fileToUpload.name : ""}
       />
 
-      <EmailModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* Eliminamos el control del modal desde aquí, ahora se controlará en el padre */}
+      {/* <EmailModal open={isModalOpen} onClose={() => setIsModalOpen(false)} /> */}
 
       <ToastContainer
         position="bottom-center"
-        autoClose={5000}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
-        closeOnClick={false}
+        closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable

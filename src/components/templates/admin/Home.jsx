@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import AsideBar from "../../ui/AsideBar";
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
+// NUEVO: Importa el componente del modal de email
+import EmailModal from "../../ui/EmailModal"; 
 import { responseChat } from "../../../services/chat/chatServices";
 import { decodeAndDisplayToken } from "../../../services/auth/authService.js";
 
@@ -10,6 +12,14 @@ const Home = () => {
   const [isAsideExpanded, setIsAsideExpanded] = useState(false);
   const messagesEndRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // --- INICIO DE CAMBIOS ---
+
+  // NUEVO: Estados para controlar el modal y su contenido
+  const [isEmailModalOpen, setEmailModalOpen] = useState(false);
+  const [emailModalContent, setEmailModalContent] = useState("");
+
+  // --- FIN DE CAMBIOS ---
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -22,42 +32,55 @@ const Home = () => {
     }
   }, [messages]);
 
-  const handleSend = async (text) => {
-  if (!text.trim()) return;
+  // MODIFICADO: La función ahora acepta 'isEmailMode'
+  const handleSend = async (text, isEmailMode = false) => {
+    if (!text.trim()) return;
 
-  setMessages((prevMessages) => [
-    ...prevMessages,
-    { content: text, isUser: true },
-  ]);
-  setIsLoading(true);
-
-  try {
-    const tokenData = decodeAndDisplayToken();
-    const sessionId = tokenData?.id || localStorage.getItem("userId");
-
-    if (!sessionId) throw new Error("No session ID available");
-
-    const chatResponse = await responseChat(text, sessionId);
-
-    if (chatResponse?.text) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { content: chatResponse.text, isUser: false },
-      ]);
-    }
-  } catch (error) {
-    console.error("Error sending message:", error);
+    // Esto se hace en ambos casos: mostrar el mensaje del usuario en el chat
     setMessages((prevMessages) => [
       ...prevMessages,
-      {
-        content: "Lo siento, hubo un error al procesar tu mensaje.",
-        isUser: false,
-      },
+      { content: text, isUser: true },
     ]);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    setIsLoading(true);
+
+    try {
+      const tokenData = decodeAndDisplayToken();
+      const sessionId = tokenData?.id || localStorage.getItem("userId");
+
+      if (!sessionId) throw new Error("No session ID available");
+
+      // La llamada a la API se hace en ambos casos
+      const chatResponse = await responseChat(text, sessionId);
+
+      // --- INICIO DE LÓGICA CONDICIONAL ---
+      if (chatResponse?.text) {
+        if (isEmailMode) {
+          // MODO EMAIL: No se añade al chat. Se guarda el contenido y se abre el modal.
+          setEmailModalContent(chatResponse.text);
+          setEmailModalOpen(true);
+        } else {
+          // MODO CHAT NORMAL: Se añade la respuesta de la IA al historial del chat.
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { content: chatResponse.text, isUser: false },
+          ]);
+        }
+      }
+      // --- FIN DE LÓGICA CONDICIONAL ---
+
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          content: "Lo siento, hubo un error al procesar tu mensaje.",
+          isUser: false,
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
   return (
@@ -84,6 +107,7 @@ const Home = () => {
                 ¿En qué te puedo ayudar hoy?
               </h1>
               <div className="w-full px-2">
+                {/* El componente ChatInput ya está listo para funcionar con handleSend */}
                 <ChatInput onSend={handleSend} isLoading={isLoading} />
               </div>
             </div>
@@ -105,11 +129,19 @@ const Home = () => {
         {messages.length > 0 && (
           <div className="p-4 bg-greyPrimary sticky bottom-0 w-full z-10 ">
             <div className="max-w-4xl mx-auto">
+              {/* El componente ChatInput ya está listo para funcionar con handleSend */}
               <ChatInput onSend={handleSend} isLoading={isLoading} />
             </div>
           </div>
         )}
       </main>
+
+      {/* NUEVO: Renderiza el modal aquí. Estará oculto por defecto. */}
+      <EmailModal
+        open={isEmailModalOpen}
+        onClose={() => setEmailModalOpen(false)}
+        body={emailModalContent}
+      />
     </div>
   );
 };

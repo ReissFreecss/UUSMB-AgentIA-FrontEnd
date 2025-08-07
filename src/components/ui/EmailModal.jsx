@@ -1,6 +1,6 @@
 import { Mail, SendHorizonal, User, X, Type, MessageSquare } from "lucide-react";
 
-const EmailModal = ({ open, onClose }) => {
+const EmailModal = ({ open, onClose, body }) => {
   if (!open) return null;
 
   return (
@@ -41,7 +41,7 @@ const EmailModal = ({ open, onClose }) => {
           <div className="relative">
              <MessageSquare className="w-5 h-5 text-parchment-400 absolute top-5 left-3" />
             <textarea
-              placeholder="Escribe tu mensaje aquí..."
+              defaultValue={body}
               rows={8}
               className="w-full bg-greyPrimary dark:bg-parchment-900 border border-parchment-200 dark:border-parchment-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-parchment-700 dark:text-parchment-200 resize-none focus:outline-none focus:ring-2 focus:ring-primary transition"
             />
