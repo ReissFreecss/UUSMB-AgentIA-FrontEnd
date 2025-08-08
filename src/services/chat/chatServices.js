@@ -102,7 +102,7 @@ export const uploadFileCotizar = async (file) => {
       );
     }
 
-  //  console.log("Archivo subido correctamente desde cotizar");  
+    //  console.log("Archivo subido correctamente desde cotizar");
     return handleResponse(response);
   } catch (error) {
     console.error("Error al subir el archivo:", error);
@@ -125,7 +125,7 @@ export const responseChatSisbi = async (message, id) => {
       }),
     });
 
-   // console.log("Response from chatSisbi:");
+    // console.log("Response from chatSisbi:");
     return await handleResponse(response);
   } catch (error) {
     console.error("Error al obtener la respuesta del chat:", error);
@@ -157,11 +157,33 @@ export const uploadFileSisbi = async (file) => {
       );
     }
 
-   // console.log("Archivo subido correctamente desde sisbi");
+    // console.log("Archivo subido correctamente desde sisbi");
     return handleResponse(response);
   } catch (error) {
     console.error("Error al subir el archivo:", error);
     // Vuelve a lanzar el error para que el bloque catch en handleFileChange lo reciba
+    throw error;
+  }
+};
+
+export const sendEmail = async (to, subject, body) => {
+  try {
+    const response = await fetch(`${API_URL}/n8n/email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeader(),
+      },
+      body: JSON.stringify({
+        to: to,
+        subject: String(subject),
+        body: String(body),
+      }),
+    });
+
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("Error al enviar el correo electrónico:", error);
     throw error;
   }
 };

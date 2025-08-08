@@ -32,7 +32,7 @@ const ChatInput = ({ onSend, isLoading }) => {
     onSend(trimmed, isEmailModeOn);
 
     setInput(""); // Limpiamos el input
-    
+
     // Opcional: Desactivar el modo email después de enviar.
     // Si quieres que se quede activo, comenta la siguiente línea.
     if (isEmailModeOn) {
@@ -42,16 +42,15 @@ const ChatInput = ({ onSend, isLoading }) => {
 
   // NUEVO: Función para activar/desactivar el modo email
   const handleEmailModeToggle = () => {
-    setEmailModeOn(prev => !prev);
+    setEmailModeOn((prev) => !prev);
     // Mostramos una notificación para que el usuario sepa qué modo está activo
     toast.info(
       !isEmailModeOn ? "Modo Email activado" : "Modo Email desactivado",
       { autoClose: 2000, position: "top-center" }
     );
   };
-  
-  // --- FIN DE CAMBIOS ---
 
+  // --- FIN DE CAMBIOS ---
 
   const handleFileButtonClick = () => {
     if (!isLoading && fileInputRef.current) {
@@ -119,7 +118,8 @@ const ChatInput = ({ onSend, isLoading }) => {
         onSubmit={handleSubmit}
         className="flex flex-col items-start w-full max-w-2xl mx-auto px-4 py-3"
       >
-        <div className="flex items-end w-full gap-2">
+        {/* 👇 AQUÍ ESTÁ EL CAMBIO: de 'items-end' a 'items-center' */}
+        <div className="flex items-center w-full gap-2">
           <div className="relative w-full">
             <input
               type="file"
@@ -146,7 +146,7 @@ const ChatInput = ({ onSend, isLoading }) => {
               placeholder={
                 isLoading
                   ? "Generando respuesta..."
-                  : isEmailModeOn 
+                  : isEmailModeOn
                   ? "Escribe la instrucción para generar el email..."
                   : "Escribe tu mensaje aquí..."
               }
@@ -182,18 +182,17 @@ const ChatInput = ({ onSend, isLoading }) => {
               )}
             </button>
           </div>
-          
-          {/* --- INICIO DE CAMBIOS EN EL BOTÓN DE EMAIL --- */}
+
           <button
             type="button"
-            // MODIFICADO: className cambia según el estado 'isEmailModeOn'
             className={`flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-full transition-all duration-300 active:scale-95 ${
               isEmailModeOn
-                ? "bg-blue-500 text-white" // Estilo "encendido"
-                : "bg-gray-200 text-gray-400 hover:bg-blue-300 hover:text-blue-500" // Estilo "apagado"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-gray-400 hover:bg-blue-300 hover:text-blue-500"
             }`}
-            aria-label={isEmailModeOn ? "Desactivar modo email" : "Activar modo email"}
-            // MODIFICADO: onClick ahora llama a nuestra nueva función
+            aria-label={
+              isEmailModeOn ? "Desactivar modo email" : "Activar modo email"
+            }
             onClick={handleEmailModeToggle}
           >
             {isLoading ? (
@@ -202,8 +201,6 @@ const ChatInput = ({ onSend, isLoading }) => {
               <MailPlus className="w-5 h-5" />
             )}
           </button>
-          {/* --- FIN DE CAMBIOS EN EL BOTÓN DE EMAIL --- */}
-          
         </div>
       </form>
 
@@ -213,9 +210,6 @@ const ChatInput = ({ onSend, isLoading }) => {
         onConfirm={handleConfirmUpload}
         fileName={fileToUpload ? fileToUpload.name : ""}
       />
-
-      {/* Eliminamos el control del modal desde aquí, ahora se controlará en el padre */}
-      {/* <EmailModal open={isModalOpen} onClose={() => setIsModalOpen(false)} /> */}
 
       <ToastContainer
         position="bottom-center"
